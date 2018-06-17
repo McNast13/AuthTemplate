@@ -10,14 +10,35 @@ var mongoose = require('mongoose');
 var flash = require('connect-flash');
 var session = require('express-session');
 
-var configDB = require('./config/database.js');
-mongoose.connect(configDB.url);
+//var configDB = require('./config/database.js');
+//mongoose.connect(configDB.url);
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 
 var app = express();
 
+var mongoPassword = 'spuncle78';
+			
+var http = require('http');
+var server = http.createServer(function(req, res) {
+  res.writeHead(200, { 'Content-Type': 'text/plain' });
+
+var config = JSON.parse(process.env.APP_CONFIG);
+var MongoClient = require('mongodb').MongoClient;
+
+MongoClient.connect(
+  "mongodb://" + config.mongo.user + ":" + encodeURIComponent(mongoPassword) + "@" + 
+  config.mongo.hostString, 
+  function(err, db) {
+    if(!err) {
+      res.end("We are connected to MongoDB");
+    } else {
+      res.end("Error while connecting to MongoDB");
+    }
+  }
+);
+});
 
 
 // view engine setup
